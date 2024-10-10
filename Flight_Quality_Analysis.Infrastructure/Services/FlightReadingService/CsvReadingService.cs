@@ -27,7 +27,7 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
         public async Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null)
         {
             string filePathFromSetting;
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Docker")
+            if (Environment.GetEnvironmentVariable("RUNNING_ENV") == "Docker")
             {
                 filePathFromSetting = _configuration["Docker_CsvFilePath"];
             }
@@ -38,6 +38,7 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
             }
             // Get the CSV file path from configuration
             filePath = filePath ?? filePathFromSetting;
+
 
             string absoluteFilePath = Path.Combine(_hostEnvironment.ContentRootPath, filePath);
 
@@ -87,7 +88,7 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
             }
             catch (FileNotFoundException ex)
             {
-                Console.WriteLine($"File not found: {filePath}. Error: {ex.Message}");
+                throw new FileNotFoundException($"File not found at path: {filePathFromSetting}");
             }
             catch (Exception ex)
             {

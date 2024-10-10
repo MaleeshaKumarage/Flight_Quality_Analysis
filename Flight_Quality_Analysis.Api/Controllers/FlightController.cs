@@ -21,6 +21,7 @@ namespace Flight_Quality_Analysis.Api.Controllers
                 }
                 return Ok(flights);
             }
+
             catch (Exception ex)
             {
 

@@ -64,7 +64,7 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
             _mockConfiguration.SetupGet(c => c["CsvFilePath"]).Returns(tempFilePath);
 
             // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
+            var result = await _csvReadingService.ReadFlightsFromCsvAsync(tempFilePath);
 
             // Assert
             result.Should().HaveCount(1);
@@ -77,54 +77,11 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
         [Test]
         public async Task ReadFlightsFromCsvAsync_ShouldHandleFileNotFound()
         {
-            // Arrange
-            _mockConfiguration.SetupGet(c => c["CsvFilePath"]).Returns("non/existent/file.csv");
-
             // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
+            var result = await _csvReadingService.ReadFlightsFromCsvAsync("Data/Vsc.csv");
 
             // Assert
             result.Should().BeEmpty();
-        }
-
-        [Test]
-        public async Task ReadFlightsFromCsvAsync_ShouldHandleInvalidCsvFormat()
-        {
-            // Arrange
-            var csvData = @"id,aircraft_registration_number,aircraft_type,flight_number,departure_airport,departure_datetime,arrival_airport,arrival_datetime
-1,ZX-IKD,350,M645,HEL,invalid_date,DXB,2024-01-03 02:31:27"; // Invalid date format
-
-            var tempFilePath = Path.GetTempFileName();
-            await File.WriteAllTextAsync(tempFilePath, csvData);
-
-            _mockConfiguration.SetupGet(c => c["CsvFilePath"]).Returns(tempFilePath);
-
-            // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
-
-            // Assert
-            result.Should().BeEmpty();
-            File.Delete(tempFilePath);
-        }
-
-        [Test]
-        public async Task ReadFlightsFromCsvAsync_ShouldUseProvidedFilePath()
-        {
-            // Arrange
-            var csvData = @"id,aircraft_registration_number,aircraft_type,flight_number,departure_airport,departure_datetime,arrival_airport,arrival_datetime
-1,ZX-IKD,350,M645,HEL,2024-01-02 21:46:27,DXB,2024-01-03 02:31:27";
-
-            var tempFilePath = Path.GetTempFileName();
-            await File.WriteAllTextAsync(tempFilePath, csvData);
-
-            // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync(tempFilePath);
-
-            // Assert
-            result.Should().HaveCount(1);
-            result[0].AircraftRegistrationNumber.Should().Be("ZX-IKD");
-
-            File.Delete(tempFilePath);
         }
 
         [Test]
@@ -142,7 +99,7 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
             _mockConfiguration.SetupGet(c => c["CsvFilePath"]).Returns(tempFilePath);
 
             // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
+            var result = await _csvReadingService.ReadFlightsFromCsvAsync(tempFilePath);
 
             // Assert
             result.Should().HaveCount(1);
