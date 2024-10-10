@@ -1,4 +1,5 @@
 ﻿using Flight_Quality_Analysis.Domain.Entity;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,11 +11,15 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
 {
     public class CsvReadingService : ICsvReadingService
     {
-        private const string CsvFilePath = "C:\\Users\\malee\\source\\repos\\Flight_Quality_Analysis\\Flight_Quality_Analysis.Infrastructure\\Data\\flights.csv";
+        private readonly IConfiguration _configuration;
 
+        public CsvReadingService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public async Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null)
         {
-            filePath = filePath ?? CsvFilePath;
+            filePath = filePath ?? _configuration["CsvFilePath"];
             var flights = new List<Flight>();
             try
             {
