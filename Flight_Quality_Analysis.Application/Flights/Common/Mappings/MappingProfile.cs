@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Flight_Quality_Analysis.Domain.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,16 @@ namespace Flight_Quality_Analysis.Application.Flights.Common.Mappings
         {
 
             ApplyMappingFromAssembly(Assembly.GetExecutingAssembly());
+            CreateMap<KeyValuePair<Flight, string>, FlightInconsitancyDto>()
+               .ForMember(dest => dest.Reason, opt => opt.MapFrom(src => src.Value))
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Key.Id))
+               .ForMember(dest => dest.AircraftRegistrationNumber, opt => opt.MapFrom(src => src.Key.AircraftRegistrationNumber))
+               .ForMember(dest => dest.AircraftType, opt => opt.MapFrom(src => src.Key.AircraftType))
+               .ForMember(dest => dest.FlightNumber, opt => opt.MapFrom(src => src.Key.FlightNumber))
+               .ForMember(dest => dest.DepartureAirport, opt => opt.MapFrom(src => src.Key.DepartureAirport))
+               .ForMember(dest => dest.DepartureDateTime, opt => opt.MapFrom(src => src.Key.DepartureDateTime))
+               .ForMember(dest => dest.ArrivalAirport, opt => opt.MapFrom(src => src.Key.ArrivalAirport))
+               .ForMember(dest => dest.ArrivalDateTime, opt => opt.MapFrom(src => src.Key.ArrivalDateTime));
         }
         private void ApplyMappingFromAssembly(Assembly assembly)
         {

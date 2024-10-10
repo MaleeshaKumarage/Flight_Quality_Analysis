@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Quality_Analysis.Application.Flights.Common
 {
-    public class FlightInconsistancyDto : IMapFrom<Flight>
+    public class FlightInconsitancyDto : IMapFrom<Flight>
     {
         public int Id { get; set; }
         public string AircraftRegistrationNumber { get; set; }
@@ -18,5 +18,6 @@ namespace Flight_Quality_Analysis.Application.Flights.Common
         public DateTime DepartureDateTime { get; set; }
         public string ArrivalAirport { get; set; }
         public DateTime ArrivalDateTime { get; set; }
+        public String Reason { get; set; }
     }
 }
