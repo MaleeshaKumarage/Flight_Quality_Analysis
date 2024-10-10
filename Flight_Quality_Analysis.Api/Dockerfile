@@ -9,11 +9,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy the entire solution (including Application and Infrastructure projects) to the build context
+# Copy the entire solution to the build context
 COPY . .
 
-# Restore dependencies for the main project and any referenced projects
-RUN dotnet restore "Flight_Quality_Analysis.Api/Flight_Quality_Analysis.Api.csproj"
+# If the .csproj is inside a subfolder, make sure the path is correct
+RUN dotnet restore "./Flight_Quality_Analysis.Api/Flight_Quality_Analysis.Api.csproj"
 
 # Build the project
 WORKDIR "/src/Flight_Quality_Analysis.Api"
@@ -28,7 +28,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-## Copy the CSV file if needed
+## Copy any additional resources
 #COPY ./Flight_Quality_Analysis.Infrastructure/Data/flights.csv /path/in/container/
 
 # Set the entry point for the application
