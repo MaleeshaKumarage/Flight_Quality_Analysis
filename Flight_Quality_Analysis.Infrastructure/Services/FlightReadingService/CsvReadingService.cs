@@ -23,12 +23,21 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
         }
 
 
-        
+
         public async Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null)
         {
+            string filePathFromSetting;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Docker")
+            {
+                filePathFromSetting = _configuration["Docker_CsvFilePath"];
+            }
+            else
+            {
+                filePathFromSetting = _configuration["Development_CsvFilePath"];
 
+            }
             // Get the CSV file path from configuration
-            filePath = filePath ?? _configuration["CsvFilePath"];
+            filePath = filePath ?? filePathFromSetting;
 
             string absoluteFilePath = Path.Combine(_hostEnvironment.ContentRootPath, filePath);
 
