@@ -62,7 +62,7 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          context: .
+          context: ./Flight_Quality_Analysis.Api
           file: ./Flight_Quality_Analysis.Api/Dockerfile
 
   deploy:
