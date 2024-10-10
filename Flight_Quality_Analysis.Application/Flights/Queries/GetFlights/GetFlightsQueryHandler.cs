@@ -24,8 +24,6 @@ namespace Flight_Quality_Analysis.Application.Flights.Queries.GetFlights
         {
             var flights = await _flightRepository.GetAllFlightsAsync();
             return _mapper.Map<List<FlightInconsistancyDto>>(flights);
-
-
         }
     }
 }

@@ -24,7 +24,10 @@ namespace Flight_Quality_Analysis.Infrastructure.Repository
 
         public async Task<List<Flight>> GetAllFlightsAsync()
         {
+
             return await _csvReadingService.ReadFlightsFromCsvAsync();
+
+
         }
 
         public async Task<Dictionary<Flight, string>> GetInconsistentFlightsAsync()
