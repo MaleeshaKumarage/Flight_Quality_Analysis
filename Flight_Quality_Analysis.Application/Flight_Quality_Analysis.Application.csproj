@@ -9,8 +9,6 @@
   <ItemGroup>
     <Folder Include="Flights\Commands\" />
     <Folder Include="Flights\Common\Exceptions\" />
-    <Folder Include="Flights\Common\Mappings\" />
-    <Folder Include="Flights\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
