@@ -9,32 +9,87 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FlightAnalysisService
 {
     public class FlightInconsistancyAnalysisService : IFlightInconsistancyAnalysisService
     {
-        public List<Flight> FindInconsistentFlights(List<Flight> flights)
+        public Dictionary<Flight, string> FindInconsistentFlights(List<Flight> flights)
         {
+            var inconsistentFlightsWithReason = new Dictionary<Flight, string>();
 
-            var inconsistentFlights = new List<Flight>();
-            //Flights are grouped based on its Registration Number
+            // Group flights by aircraft registration number
             var groupedFlights = flights.GroupBy(f => f.AircraftRegistrationNumber);
 
             foreach (var group in groupedFlights)
-            {   //Each group Order by Departure Time
-                //This will return List of flights ordered by departure time spesific to registrationNumber
+            {
+                // Order each group's flights by departure time
                 var orderedFlights = group.OrderBy(f => f.DepartureDateTime).ToList();
 
-                for (int i = 1; i < orderedFlights.Count; i++)
-                {//Check the adjacent flight's Arrival and Depature to identify is there any inconsitancy
-                    var previousFlight = orderedFlights[i - 1];
+                for (int i = 0; i < orderedFlights.Count; i++)
+                {
                     var currentFlight = orderedFlights[i];
 
-                    if (previousFlight.ArrivalAirport != currentFlight.DepartureAirport)
+                    // Check negative duration for each individual flight
+                    CheckNegativeDuration(currentFlight, inconsistentFlightsWithReason);
+
+                    // Check for inconsistencies between consecutive flights
+                    if (i > 0)
                     {
-                        inconsistentFlights.Add(currentFlight);
+                        var previousFlight = orderedFlights[i - 1];
+
+                        // Check for airport inconsistency
+                        CheckAirportInconsistency(previousFlight, currentFlight, inconsistentFlightsWithReason);
+
+                        // Check for time inconsistency and overlap
+                        CheckTimeAndOverlapInconsistency(previousFlight, currentFlight, inconsistentFlightsWithReason);
+
+                        // Check for back-to-back airport matches
+                        CheckBackToBackAirportMatch(currentFlight, inconsistentFlightsWithReason);
                     }
                 }
             }
 
-            return inconsistentFlights;
+            return inconsistentFlightsWithReason;
+        }
 
+        private void CheckAirportInconsistency(Flight previousFlight, Flight currentFlight, Dictionary<Flight, string> inconsistencies)
+        {
+            if (previousFlight.ArrivalAirport != currentFlight.DepartureAirport)
+            {
+                AddInconsistency(currentFlight, "Arrival and departure airport mismatch.", inconsistencies);
+            }
+        }
+
+        private void CheckTimeAndOverlapInconsistency(Flight previousFlight, Flight currentFlight, Dictionary<Flight, string> inconsistencies)
+        {
+            if (currentFlight.DepartureDateTime < previousFlight.ArrivalDateTime)
+            {
+                AddInconsistency(currentFlight, "Time inconsistency: Departure before previous arrival or overlapping flights.", inconsistencies);
+            }
+        }
+
+        private void CheckNegativeDuration(Flight currentFlight, Dictionary<Flight, string> inconsistencies)
+        {
+            if (currentFlight.ArrivalDateTime < currentFlight.DepartureDateTime)
+            {
+                AddInconsistency(currentFlight, "Negative duration: Arrival time is before departure time.", inconsistencies);
+            }
+        }
+
+        private void CheckBackToBackAirportMatch(Flight currentFlight, Dictionary<Flight, string> inconsistencies)
+        {
+            if (currentFlight.DepartureAirport == currentFlight.ArrivalAirport)
+            {
+                AddInconsistency(currentFlight, "Back-to-back airport match: Departure and arrival airports are the same.", inconsistencies);
+            }
+        }
+
+        private void AddInconsistency(Flight flight, string reason, Dictionary<Flight, string> inconsistencies)
+        {
+            if (!inconsistencies.ContainsKey(flight))
+            {
+                inconsistencies[flight] = reason;
+            }
+            else
+            {
+                inconsistencies[flight] += $" {reason}";
+            }
         }
     }
 }
