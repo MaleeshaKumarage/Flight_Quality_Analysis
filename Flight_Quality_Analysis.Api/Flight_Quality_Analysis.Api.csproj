@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Flight_Quality_Analysis.Application\Flight_Quality_Analysis.Application.csproj" />
     <ProjectReference Include="..\Flight_Quality_Analysis.Infrastructure\Flight_Quality_Analysis.Infrastructure.csproj" />
+	  
   </ItemGroup>
 
 </Project>
