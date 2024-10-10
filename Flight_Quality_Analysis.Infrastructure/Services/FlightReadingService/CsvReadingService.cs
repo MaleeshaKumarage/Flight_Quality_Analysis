@@ -13,6 +13,7 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
     public class CsvReadingService : ICsvReadingService
     {
         private readonly IConfiguration _configuration;
+
         private readonly IHostEnvironment _hostEnvironment;
 
         public CsvReadingService(IConfiguration configuration, IHostEnvironment hostEnvironment)
@@ -21,8 +22,11 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
             _hostEnvironment = hostEnvironment;
         }
 
+
+        
         public async Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null)
         {
+
             // Get the CSV file path from configuration
             filePath = filePath ?? _configuration["CsvFilePath"];
 
