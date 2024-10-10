@@ -15,32 +15,83 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
     public class FlightInconsistancyAnalysisServiceTests
     {
         private FlightInconsistancyAnalysisService _flightInconsistancyAnalysisService;
-        private CsvReadingService _csvReadingService;
-        private Mock<ICsvReadingService> _mockCsvReadingService;
+
         [SetUp]
         public void SetUp()
         {
             _flightInconsistancyAnalysisService = new FlightInconsistancyAnalysisService();
-            _csvReadingService = new CsvReadingService();
-            _mockCsvReadingService = new Mock<ICsvReadingService>();
         }
+
         [Test]
-        public async Task GetInconsistentFlightsAsync_ShouldReturnInconsistentFlights()
+        public void FindInconsistentFlights_ShouldReturnAirportMismatchInconsistency()
         {
             // Arrange
             var flights = new List<Flight>
             {
-                new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "LHR" },
-                new Flight { Id = 2, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "CDG", ArrivalAirport = "JFK" }
+                new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "LHR", DepartureDateTime = DateTime.Now.AddHours(-4), ArrivalDateTime = DateTime.Now.AddHours(-2) },
+                new Flight { Id = 2, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "CDG", ArrivalAirport = "JFK", DepartureDateTime = DateTime.Now.AddHours(1), ArrivalDateTime = DateTime.Now.AddHours(4) }
             };
-            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync(null)).ReturnsAsync(flights);
 
             // Act
             var result = _flightInconsistancyAnalysisService.FindInconsistentFlights(flights);
 
             // Assert
-            result.Should().HaveCount(1); 
-            result[0].ArrivalAirport.Should().Be("JFK"); 
+            result.Should().ContainKey(flights[1]);
+            result[flights[1]].Should().Contain("Arrival and departure airport mismatch.");
         }
+
+        [Test]
+        public void FindInconsistentFlights_ShouldReturnTimeOverlapInconsistency()
+        {
+            // Arrange
+            var flights = new List<Flight>
+            {
+                new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "LHR", DepartureDateTime = DateTime.Now.AddHours(-4), ArrivalDateTime = DateTime.Now.AddHours(-2) },
+                new Flight { Id = 2, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "LHR", ArrivalAirport = "JFK", DepartureDateTime = DateTime.Now.AddHours(-3), ArrivalDateTime = DateTime.Now.AddHours(2) }
+            };
+
+            // Act
+            var result = _flightInconsistancyAnalysisService.FindInconsistentFlights(flights);
+
+            // Assert
+            result.Should().ContainKey(flights[1]);
+            result[flights[1]].Should().Contain("Time inconsistency: Departure before previous arrival or overlapping flights.");
+        }
+
+        [Test]
+        public void FindInconsistentFlights_ShouldReturnNegativeDurationInconsistency()
+        {
+            // Arrange
+            var flights = new List<Flight>
+            {
+                new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "LHR", DepartureDateTime = DateTime.Now.AddHours(-4), ArrivalDateTime = DateTime.Now.AddHours(-5) }
+            };
+
+            // Act
+            var result = _flightInconsistancyAnalysisService.FindInconsistentFlights(flights);
+
+            // Assert
+            result.Should().ContainKey(flights[0]);
+            result[flights[0]].Should().Contain("Negative duration: Arrival time is before departure time.");
+        }
+
+        [Test]
+        public void FindInconsistentFlights_ShouldReturnBackToBackAirportMatchInconsistency()
+        {
+            // Arrange
+            var flights = new List<Flight>
+            {
+                new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "HEL", DepartureDateTime = DateTime.Now.AddHours(-4), ArrivalDateTime = DateTime.Now.AddHours(-2) }
+            };
+
+            // Act
+            var result = _flightInconsistancyAnalysisService.FindInconsistentFlights(flights);
+
+            // Assert
+            result.Should().ContainKey(flights[0]);
+            result[flights[0]].Should().Contain("Back-to-back airport match: Departure and arrival airports are the same.");
+        }
+
+
     }
 }
