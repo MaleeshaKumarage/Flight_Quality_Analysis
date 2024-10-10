@@ -28,6 +28,9 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FlightAnalysisService
                     // Check negative duration for each individual flight
                     CheckNegativeDuration(currentFlight, inconsistentFlightsWithReason);
 
+                    // Check for back-to-back airport matches
+                    CheckBackToBackAirportMatch(currentFlight, inconsistentFlightsWithReason);
+
                     // Check for inconsistencies between consecutive flights
                     if (i > 0)
                     {
