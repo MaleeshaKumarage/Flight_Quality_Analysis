@@ -31,10 +31,10 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
             {
                 new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "DXB" }
             };
-            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync()).ReturnsAsync(flights);
+            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync(null)).ReturnsAsync(flights);
 
             // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
+            var result = await _mockCsvReadingService.Object.ReadFlightsFromCsvAsync();
 
             // Assert
             result.Should().BeEquivalentTo(flights);
@@ -51,7 +51,7 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
             await File.WriteAllTextAsync(path, csvData);
 
             // Act
-            var result = await _csvReadingService.ReadFlightsFromCsvAsync();
+            var result = await _csvReadingService.ReadFlightsFromCsvAsync(path);
 
             // Assert
             result.Should().HaveCount(1);

@@ -33,15 +33,14 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
                 new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "LHR" },
                 new Flight { Id = 2, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "CDG", ArrivalAirport = "JFK" }
             };
-            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync()).ReturnsAsync(flights);
+            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync(null)).ReturnsAsync(flights);
 
             // Act
-
             var result = _flightInconsistancyAnalysisService.FindInconsistentFlights(flights);
 
             // Assert
-            result.Should().HaveCount(1);
-            result[0].FlightNumber.Should().Be("JFK");
+            result.Should().HaveCount(1); 
+            result[0].ArrivalAirport.Should().Be("JFK"); 
         }
     }
 }

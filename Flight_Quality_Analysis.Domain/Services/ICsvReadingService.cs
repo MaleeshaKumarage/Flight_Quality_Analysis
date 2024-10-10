@@ -9,6 +9,6 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
 {
     public interface ICsvReadingService
     {
-        Task<List<Flight>> ReadFlightsFromCsvAsync();
+        Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null);
     }
 }
