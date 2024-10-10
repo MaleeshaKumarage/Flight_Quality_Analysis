@@ -25,7 +25,7 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FlightAnalysisService
                 {
                     var currentFlight = orderedFlights[i];
 
-                    // Check negative duration for each individual flight
+                    // Check negative duration for each flight
                     CheckNegativeDuration(currentFlight, inconsistentFlightsWithReason);
 
                     // Check for back-to-back airport matches
