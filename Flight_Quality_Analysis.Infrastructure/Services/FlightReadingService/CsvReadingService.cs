@@ -1,5 +1,6 @@
 ﻿using Flight_Quality_Analysis.Domain.Entity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,17 +14,28 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FileReadingService
     {
         private readonly IConfiguration _configuration;
 
-        public CsvReadingService(IConfiguration configuration)
+        private readonly IHostEnvironment _hostEnvironment;
+
+        public CsvReadingService(IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             _configuration = configuration;
+            _hostEnvironment = hostEnvironment;
         }
+
+
+        
         public async Task<List<Flight>> ReadFlightsFromCsvAsync(string? filePath = null)
         {
+
+            // Get the CSV file path from configuration
             filePath = filePath ?? _configuration["CsvFilePath"];
+
+            string absoluteFilePath = Path.Combine(_hostEnvironment.ContentRootPath, filePath);
+
             var flights = new List<Flight>();
             try
             {
-                var lines = await File.ReadAllLinesAsync(filePath);
+                var lines = await File.ReadAllLinesAsync(absoluteFilePath);
                 //Skip Header
                 foreach (var line in lines.Skip(1))
                 {
