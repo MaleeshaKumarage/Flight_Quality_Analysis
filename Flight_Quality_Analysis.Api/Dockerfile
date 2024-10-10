@@ -28,8 +28,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Copy the CSV file if needed
-COPY ./Flight_Quality_Analysis.Infrastructure/Data/flights.csv /path/in/container/
+## Copy the CSV file if needed
+#COPY ./Flight_Quality_Analysis.Infrastructure/Data/flights.csv /path/in/container/
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "Flight_Quality_Analysis.Api.dll"]
