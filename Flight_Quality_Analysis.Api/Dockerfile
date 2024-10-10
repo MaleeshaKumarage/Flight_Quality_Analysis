@@ -29,7 +29,8 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Copy the CSV file into the Docker image
-COPY Flight_Quality_Analysis.Infrastructure/Data/flights.csv ./Flight_Quality_Analysis.Infrastructure/Data/flights.csv
+COPY ./Flight_Quality_Analysis.Api/ /path/in/container/
+COPY ./Flight_Quality_Analysis.Infrastructure/Data/flights.csv /path/in/container/
 
 # Set the entry point for the container
 ENTRYPOINT ["dotnet", "Flight_Quality_Analysis.Api.dll"]
