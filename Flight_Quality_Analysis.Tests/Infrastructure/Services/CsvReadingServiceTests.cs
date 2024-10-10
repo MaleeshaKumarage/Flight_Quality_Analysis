@@ -1,6 +1,7 @@
 ﻿using Flight_Quality_Analysis.Domain.Entity;
 using Flight_Quality_Analysis.Infrastructure.Services.FileReadingService;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,15 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
     {
 
         private CsvReadingService _csvReadingService;
-        private Mock<ICsvReadingService> _mockCsvReadingService;
+        private Mock<IConfiguration> _mockConfiguration;
         [SetUp]
         public void SetUp()
         {
-            _csvReadingService = new CsvReadingService();
-            _mockCsvReadingService = new Mock<ICsvReadingService>();
+            _mockConfiguration = new Mock<IConfiguration>();
+            _mockConfiguration.SetupGet(c => c["CsvFilePath"]).Returns("fake/path/to/flights.csv");
+
+            _csvReadingService = new CsvReadingService(_mockConfiguration.Object);
+
         }
 
         [Test]
@@ -31,10 +35,11 @@ namespace Flight_Quality_Analysis.Tests.Infrastructure.Services
             {
                 new Flight { Id = 1, AircraftRegistrationNumber = "ZX-IKD", DepartureAirport = "HEL", ArrivalAirport = "DXB" }
             };
-            _mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync(null)).ReturnsAsync(flights);
+            var mockCsvReadingService = new Mock<ICsvReadingService>();
+            mockCsvReadingService.Setup(s => s.ReadFlightsFromCsvAsync(null)).ReturnsAsync(flights);
 
             // Act
-            var result = await _mockCsvReadingService.Object.ReadFlightsFromCsvAsync();
+            var result = await mockCsvReadingService.Object.ReadFlightsFromCsvAsync();
 
             // Assert
             result.Should().BeEquivalentTo(flights);

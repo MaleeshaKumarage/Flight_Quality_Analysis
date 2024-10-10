@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Quality_Analysis.Application.Flights.Queries.AnalyzeFlights
 {
-    public class AnalyzeFlightsQuery : IRequest<List<FlightDto>>
+    public class AnalyzeFlightsQuery : IRequest<List<FlightInconsitancyDto>>
     {
     }
 }

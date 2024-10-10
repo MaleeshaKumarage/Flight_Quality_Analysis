@@ -24,11 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\" />
-    <Folder Include="Application\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Flight_Quality_Analysis.Infrastructure\Flight_Quality_Analysis.Infrastructure.csproj" />
   </ItemGroup>
 

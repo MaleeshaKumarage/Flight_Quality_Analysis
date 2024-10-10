@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Quality_Analysis.Application.Flights.Queries.AnalyzeFlights
 {
-    public class AnalyzeFlightsQueryHandler : IRequestHandler<AnalyzeFlightsQuery, List<FlightDto>>
+    public class AnalyzeFlightsQueryHandler : IRequestHandler<AnalyzeFlightsQuery, List<FlightInconsitancyDto>>
     {
         private readonly IFlightRepository _flightRepository;
         private readonly IMapper _mapper;
@@ -22,10 +22,10 @@ namespace Flight_Quality_Analysis.Application.Flights.Queries.AnalyzeFlights
             _mapper = mapper;
         }
 
-        public async Task<List<FlightDto>> Handle(AnalyzeFlightsQuery request, CancellationToken cancellationToken)
+        public async Task<List<FlightInconsitancyDto>> Handle(AnalyzeFlightsQuery request, CancellationToken cancellationToken)
         {
             var inconsistentFlights = await _flightRepository.GetInconsistentFlightsAsync();
-            return _mapper.Map<List<FlightDto>>(inconsistentFlights);
+            return _mapper.Map<List<FlightInconsitancyDto>>(inconsistentFlights.ToList()); 
         }
     }
 }

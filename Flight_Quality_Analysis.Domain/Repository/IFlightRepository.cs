@@ -10,6 +10,6 @@ namespace Flight_Quality_Analysis.Domain.Repository
     public interface IFlightRepository
     {
         Task<List<Flight>> GetAllFlightsAsync();
-        Task<List<Flight>> GetInconsistentFlightsAsync();
+        Task<Dictionary<Flight, string>> GetInconsistentFlightsAsync();
     }
 }

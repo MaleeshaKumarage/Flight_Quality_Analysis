@@ -9,6 +9,6 @@ namespace Flight_Quality_Analysis.Infrastructure.Services.FlightAnalysisService
 {
     public interface IFlightInconsistancyAnalysisService
     {
-        List<Flight> FindInconsistentFlights(List<Flight> flights);
+        Dictionary<Flight, string> FindInconsistentFlights(List<Flight> flights);
     }
 }
